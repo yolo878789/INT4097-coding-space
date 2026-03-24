@@ -2,21 +2,23 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+const os = require('os');  // 添加这行
 
 const app = express();
 
-// 中间件：移除所有安全头，允许内联脚本
-app.use((req, res, next) => {
-    // 移除可能导致问题的安全头
-    res.removeHeader('Content-Security-Policy');
-    res.removeHeader('X-Content-Security-Policy');
-    res.removeHeader('X-WebKit-CSP');
-    
-    // 设置宽松的CSP头
-    res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;");
-    
-    next();
-});
+// 获取本机局域网IP的函数
+function getLocalIP() {
+    const interfaces = os.networkInterfaces();
+    for (let name of Object.keys(interfaces)) {
+        for (let iface of interfaces[name]) {
+            // 跳过内部地址和非IPv4
+            if (iface.family === 'IPv4' && !iface.internal) {
+                return iface.address;
+            }
+        }
+    }
+    return '127.0.0.1';
+}
 
 // 中间件配置
 app.use(cors());                // 允许跨域请求
@@ -31,6 +33,7 @@ app.use(express.static(frontendPath));
 const BASEROW_API_URL = process.env.BASEROW_API_URL || 'https://api.baserow.io';
 const BASEROW_TOKEN = process.env.BASEROW_TOKEN;
 const TABLE_ID = process.env.TABLE_ID;
+const PORT = process.env.PORT || 3000;
 
 // 检查必要的配置
 if (!BASEROW_TOKEN) {
@@ -55,7 +58,7 @@ const addUserFieldNames = (url) => {
     return `${url}${separator}user_field_names=true`;
 };
 
-// ============== API路由 ==============
+// ============== API路由（保持不变） ==============
 
 // 健康检查端点
 app.get('/api/health', (req, res) => {
@@ -112,12 +115,10 @@ app.post('/api/users', async (req, res) => {
             Ranking = []
         } = req.body;
 
-        // 验证必要字段
         if (!Username || !Email) {
             return res.status(400).json({ error: '用户名和邮箱不能为空' });
         }
 
-        // 构建用户数据
         const userData = {
             Username,
             Email,
@@ -140,13 +141,12 @@ app.post('/api/users', async (req, res) => {
     }
 });
 
-// 更新用户分数（增加分数）
+// 更新用户分数
 app.patch('/api/users/:row_id/score', async (req, res) => {
     try {
         const { row_id } = req.params;
         const { score } = req.body;
 
-        // 先获取当前用户信息
         const currentUser = await baserowApi.get(
             addUserFieldNames(`/api/database/rows/table/${TABLE_ID}/${row_id}/`)
         );
@@ -154,7 +154,6 @@ app.patch('/api/users/:row_id/score', async (req, res) => {
         const currentScore = parseInt(currentUser.data['Total Score']) || 0;
         const newScore = currentScore + score;
 
-        // 更新分数
         const response = await baserowApi.patch(
             addUserFieldNames(`/api/database/rows/table/${TABLE_ID}/${row_id}/`),
             { 'Total Score': newScore }
@@ -202,7 +201,6 @@ app.get('/api/leaderboard', async (req, res) => {
         );
 
         const users = response.data.results || response.data;
-        // 按总分降序排序，取前10名
         const leaderboard = users
             .filter(user => user['Total Score'] !== undefined)
             .sort((a, b) => {
@@ -222,6 +220,18 @@ app.get('/api/leaderboard', async (req, res) => {
 // 处理所有其他路由，返回index.html
 app.get('*', (req, res) => {
     res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
+// 启动服务器 - 监听所有网络接口
+const localIP = getLocalIP();
+app.listen(PORT, '0.0.0.0', () => {
+    console.log('\n========================================');
+    console.log('✅ 同义词大师游戏服务器已启动！');
+    console.log('========================================');
+    console.log(`📌 本机访问: http://localhost:${PORT}`);
+    console.log(`📌 局域网访问: http://${localIP}:${PORT}`);
+    console.log('\n📝 其他设备可以通过局域网IP访问');
+    console.log('========================================\n');
 });
 
 module.exports = app;
