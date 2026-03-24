@@ -1,25 +1,14 @@
+// 加载环境变量（必须在最前面）
+require('dotenv').config();
+
+// 导入应用
 const app = require('./app');
-const config = require('./config/env');
-const logger = require('./utils/logger');
+const PORT = process.env.PORT || 3000;
 
-const PORT = config.port || 5000;
-
-const server = app.listen(PORT, () => {
-  logger.info(`Server running on port ${PORT} in ${config.nodeEnv} mode`);
-});
-
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-  logger.error('UNHANDLED REJECTION! 💥 Shutting down...');
-  logger.error(err.name, err.message);
-  server.close(() => {
-    process.exit(1);
-  });
-});
-
-// Handle uncaught exceptions
-process.on('uncaughtException', (err) => {
-  logger.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
-  logger.error(err.name, err.message);
-  process.exit(1);
+// 启动服务器
+app.listen(PORT, () => {
+  console.log(`✅ 服务器运行成功！`);
+  console.log(`📍 访问地址: http://localhost:${PORT}`);
+  console.log(`🎮 游戏地址: http://localhost:${PORT}`);
+  console.log(`📊 API地址: http://localhost:${PORT}/api/health`);
 });
