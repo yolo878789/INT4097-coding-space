@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>同义词大师 - 每日挑战</title>
+    <title>Synonym Master - Daily Challenge</title>
     <style>
         * {
             margin: 0;
@@ -12,169 +12,309 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            position: relative;
+        }
+
+        /* Background Animation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/><circle cx="50" cy="50" r="30" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/><circle cx="50" cy="50" r="20" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/></svg>') repeat;
+            opacity: 0.1;
+            pointer-events: none;
+            animation: rotate 60s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
-        .game-section, .auth-section, .leaderboard-section {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        /* Modern Card Design */
+        .card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 35px;
+            margin-bottom: 25px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        h1, h2 {
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        h2 {
             text-align: center;
             color: #667eea;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
         }
 
         .subtitle {
             text-align: center;
-            color: #666;
+            color: #888;
             margin-bottom: 30px;
+            font-size: 1em;
         }
 
-        .word-display {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 40px;
-            border-radius: 15px;
+        /* Login Form Styles */
+        .login-container {
             text-align: center;
-            margin-bottom: 30px;
         }
 
-        .target-word {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #764ba2;
-            margin-bottom: 10px;
+        .input-group {
+            margin-bottom: 20px;
         }
 
-        .question-number {
-            font-size: 1.2em;
-            color: #667eea;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        .guess-input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .guess-input {
-            flex: 1;
-            padding: 15px;
-            font-size: 1.1em;
-            border: 2px solid #ddd;
-            border-radius: 10px;
+        .input-group input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1em;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
             outline: none;
+            transition: all 0.3s ease;
+            font-family: inherit;
         }
 
-        .guess-input:focus {
+        .input-group input:focus {
             border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        .guess-btn, .control-btn, .hint-btn {
+        .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 50px;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-family: inherit;
         }
 
-        .guess-btn:hover, .control-btn:hover, .hint-btn:hover {
+        .btn-primary:hover {
             transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
         }
 
-        .hint-btn {
+        .btn-secondary {
             background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1em;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
         }
 
-        .new-game-btn {
-            background: #28a745;
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 152, 0, 0.3);
         }
 
-        .logout-btn {
-            background: #dc3545;
+        .btn-danger {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 0.9em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
+        .btn-start {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(67, 233, 123, 0.3);
+        }
+
+        /* Score Stats */
         .score-stats {
             display: flex;
             justify-content: space-around;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
+            margin-bottom: 30px;
+            gap: 15px;
         }
 
-        .stat {
+        .stat-card {
+            flex: 1;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 20px;
             text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
         }
 
         .stat-value {
-            font-size: 1.5em;
+            font-size: 2em;
             font-weight: bold;
-            color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .stat-label {
-            font-size: 0.8em;
+            font-size: 0.85em;
             color: #666;
-            margin-top: 5px;
+            margin-top: 8px;
+            font-weight: 500;
         }
 
+        /* Timer Display */
         .timer-display {
             text-align: center;
             font-size: 1.5em;
-            margin: 15px 0;
-            padding: 10px;
-            background: #f0f0ff;
-            border-radius: 10px;
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f0f0ff 0%, #e6e9ff 100%);
+            border-radius: 20px;
         }
 
         .timer-value {
             font-weight: bold;
             color: #ff6b6b;
-            font-size: 1.3em;
+            font-size: 1.8em;
+            font-family: monospace;
         }
 
         .timer-warning {
             color: #ff0000;
-            animation: blink 1s infinite;
+            animation: pulse 0.5s ease-in-out infinite;
         }
 
-        @keyframes blink {
-            0% { opacity: 1; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
-            100% { opacity: 1; }
         }
 
+        /* Word Display */
+        .word-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            border-radius: 25px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .target-word {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 20px 0;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .question-number {
+            font-size: 1.2em;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        /* Guess Area */
+        .guess-area {
+            margin-bottom: 30px;
+        }
+
+        .guess-input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .guess-input {
+            flex: 1;
+            padding: 15px 20px;
+            font-size: 1.1em;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .guess-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Guesses History */
         .guesses-history {
             margin-top: 30px;
             max-height: 400px;
             overflow-y: auto;
         }
 
+        .guesses-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
         .guess-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px;
-            margin-bottom: 8px;
-            border-radius: 8px;
+            padding: 12px 20px;
+            margin-bottom: 10px;
+            border-radius: 12px;
             animation: slideIn 0.3s ease;
+            transition: all 0.3s ease;
         }
 
         @keyframes slideIn {
@@ -189,43 +329,31 @@
         }
 
         .correct {
-            background: #d4edda;
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
             color: #155724;
+            border-left: 4px solid #28a745;
         }
 
         .wrong {
-            background: #f8d7da;
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
             color: #721c24;
+            border-left: 4px solid #dc3545;
         }
 
         .perfect {
             background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
             color: #155724;
             font-weight: bold;
+            border-left: 4px solid #28a745;
         }
 
         .hint-item {
-            background: #fff3cd;
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe69b 100%);
             color: #856404;
             border-left: 4px solid #ff9800;
         }
 
-        .auth-form {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .auth-form input {
-            padding: 12px;
-            font-size: 1em;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            flex: 1;
-            min-width: 200px;
-        }
-
+        /* Leaderboard */
         .leaderboard-list {
             list-style: none;
         }
@@ -234,162 +362,194 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid #eee;
+            padding: 12px 20px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-item:hover {
+            transform: translateX(5px);
+            background: #e9ecef;
         }
 
         .leaderboard-item.highlight {
-            background: #f0f0ff;
-            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
         }
 
+        .rank {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        /* User Info */
+        .user-info-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+        }
+
+        .user-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        /* Loading */
         .loading {
             text-align: center;
-            padding: 20px;
-            color: #666;
+            padding: 40px;
+            color: #999;
+        }
+
+        /* Messages */
+        .message {
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .error-message {
             background: #f8d7da;
             color: #721c24;
-            padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-            text-align: center;
+            border-left: 4px solid #dc3545;
         }
 
         .success-message {
             background: #d4edda;
             color: #155724;
-            padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-            text-align: center;
+            border-left: 4px solid #28a745;
         }
 
-        .user-info {
-            text-align: center;
-        }
-
-        .game-controls {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .reset-btn {
-            background: #ff6b6b;
-        }
-
-        .hint-usage {
-            font-size: 0.8em;
-            color: #ff9800;
-            margin-top: 5px;
-        }
-
+        /* Responsive */
         @media (max-width: 768px) {
+            .card {
+                padding: 20px;
+            }
             .target-word {
-                font-size: 1.5em;
+                font-size: 2em;
             }
             .guess-input-group {
                 flex-direction: column;
             }
-            .game-controls {
+            .score-stats {
                 flex-direction: column;
+            }
+            .stat-card {
+                padding: 15px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- 用户认证区域 -->
-        <div class="auth-section" id="authSection">
-            <div id="loginForm">
-                <h2>🎯 歡迎來到同義詞大師！</h2>
-                <p>每日挑戰 - 速度越快，分數越高！</p>
-                <div class="auth-form">
-                    <input type="text" id="username" placeholder="使用者名稱" required>
-                    <input type="email" id="email" placeholder="信箱" required>
-                    <button class="guess-btn" onclick="loginOrRegister()">開始遊戲</button>
-                </div>
-                <div id="authMessage"></div>
-            </div>
-            <div id="userInfo" style="display: none;">
-                <div class="user-info">
-                    <h3>👋 歡迎, <span id="displayUsername"></span>！</h3>
-                    <button class="control-btn logout-btn" onclick="logout()">退出登錄</button>
+        <!-- Login Section -->
+        <div class="card" id="authSection">
+            <div id="loginContainer">
+                <h1>🎯 Synonym Master</h1>
+                <p class="subtitle">Test Your Vocabulary - Daily Challenge</p>
+                <div class="login-container">
+                    <div class="input-group">
+                        <input type="text" id="username" placeholder="Username" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="email" id="email" placeholder="Email" required>
+                    </div>
+                    <button class="btn-primary" onclick="login()">Login / Register</button>
+                    <div id="authMessage"></div>
                 </div>
             </div>
         </div>
 
-        <!-- 游戏区域 -->
-        <div class="game-section" id="gameSection" style="display: none;">
-            <h1>📖 每日同義詞挑戰</h1>
-            <p class="subtitle">每日5題 - 限時90秒，速度越快分數越高！</p>
-            
-            <div class="score-stats">
-                <div class="stat">
-                    <div class="stat-value" id="todayScore">0</div>
-                    <div class="stat-label">今日總分</div>
+        <!-- Game Section (Hidden until login and start) -->
+        <div class="card" id="gameSection" style="display: none;">
+            <div id="gameContent">
+                <div class="user-info-card">
+                    <span class="user-name">👤 <span id="displayUsername"></span></span>
+                    <button class="btn-danger" onclick="logout()">Logout</button>
                 </div>
-                <div class="stat">
-                    <div class="stat-value" id="questionsCompleted">0</div>
-                    <div class="stat-label">已完成</div>
+
+                <div class="score-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="todayScore">0</div>
+                        <div class="stat-label">Today's Score</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="questionsCompleted">0</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalScore">0</div>
+                        <div class="stat-label">Total Score</div>
+                    </div>
                 </div>
-                <div class="stat">
-                    <div class="stat-value" id="totalScore">0</div>
-                    <div class="stat-label">累積總分</div>
+
+                <!-- Start Game Button -->
+                <div id="startScreen">
+                    <div style="text-align: center; padding: 40px;">
+                        <h2>Ready to Challenge?</h2>
+                        <p style="color: #666; margin: 20px 0;">5 Questions | 90 Seconds | Speed = Higher Score</p>
+                        <button class="btn-start" onclick="startGame()">🚀 Start Daily Challenge</button>
+                    </div>
+                </div>
+
+                <!-- Active Game Content (Hidden until start) -->
+                <div id="activeGame" style="display: none;">
+                    <div class="timer-display">
+                        ⏱️ Time Left: <span class="timer-value" id="gameTimer">90.00</span> seconds
+                        <div style="margin-top: 8px;">💡 Hints Left: <span id="hintCount">3</span> / 3</div>
+                    </div>
+                    
+                    <div class="word-display">
+                        <div class="question-number" id="questionNumber">Question 1 / 5</div>
+                        <div class="target-word" id="targetWord">Loading...</div>
+                        <div>🎯 Find synonyms for this word</div>
+                        <div style="margin-top: 10px; opacity: 0.9;">💡 This question has <span id="answerCount">0</span> correct answer(s)</div>
+                    </div>
+                    
+                    <div class="guess-area">
+                        <div class="guess-input-group">
+                            <input type="text" id="guessInput" class="guess-input" placeholder="Enter your guess..." onkeypress="handleKeyPress(event)">
+                            <button class="btn-primary" id="guessBtn" onclick="submitGuess()">Guess</button>
+                        </div>
+                        <button class="btn-secondary" onclick="getHint()" style="width: 100%;">💡 Get Hint</button>
+                    </div>
+                    
+                    <div class="guesses-history">
+                        <div class="guesses-title">📝 Guess History</div>
+                        <div id="guessesList"></div>
+                    </div>
                 </div>
             </div>
-            
-            <div class="timer-display">
-                ⏱️ 剩餘時間: <span class="timer-value" id="gameTimer">90.00</span> 秒
-                <div class="hint-usage" id="hintUsage">💡 提示次數: <span id="hintCount">3</span> / 3</div>
-            </div>
-            
-            <div class="word-display">
-                <div class="question-number" id="questionNumber">第 1 / 5 題</div>
-                <div class="target-label">🎯 找出這個詞的同義詞</div>
-                <div class="target-word" id="targetWord">加載中...</div>
-                <div class="hint" id="hint" style="margin-top: 10px; color: #666;">💡 提示：這題有 <span id="answerCount">0</span> 個正確答案</div>
-            </div>
-            
-            <div class="guess-area">
-                <div class="guess-input-group">
-                    <input type="text" id="guessInput" class="guess-input" placeholder="輸入你的猜測..." onkeypress="handleKeyPress(event)">
-                    <button class="guess-btn" id="guessBtn" onclick="submitGuess()">猜一猜</button>
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <button class="hint-btn" onclick="getHint()" style="flex: 1;">💡 獲取提示</button>
-                </div>
-            </div>
-            
-            <div class="guesses-history">
-                <div class="guesses-title" style="font-weight: bold; margin-bottom: 15px;">📝 猜測歷史</div>
-                <div id="guessesList"></div>
-            </div>
-            
-            <!--<div class="game-controls">
-                <button class="control-btn reset-btn" onclick="resetTodayGame()">🔄 重置今日進度</button>
-            </div>-->
         </div>
 
-        <!-- 今日最高分排行榜 -->
-        <div class="leaderboard-section">
-            <h2>🏆 今日最高分 🏆</h2>
+        <!-- Leaderboard Section -->
+        <div class="card">
+            <h2>🏆 Today's Top Players 🏆</h2>
             <div id="todayLeaderboard">
-                <div class="loading">加載排行榜中...</div>
+                <div class="loading">Loading leaderboard...</div>
             </div>
         </div>
     </div>
 
     <script>
-        // API配置
+        // API Configuration
         const API_URL = 'http://localhost:3000/api';
         
-        // 每日问题词库
+        // Question Database
         const allQuestions = [
             { word: 'happy', synonyms: ['joyful', 'glad', 'cheerful', 'delighted'], maxAnswers: 4 },
             { word: 'big', synonyms: ['large', 'huge', 'enormous', 'gigantic'], maxAnswers: 4 },
@@ -403,7 +563,7 @@
             { word: 'end', synonyms: ['finish', 'complete', 'conclude'], maxAnswers: 3 }
         ];
         
-        // 游戏状态
+        // Game State
         let currentUser = null;
         let todayQuestions = [];
         let currentQuestionIndex = 0;
@@ -416,17 +576,18 @@
         let gameTimeLeft = 90;
         let todayScore = 0;
         let totalScore = 0;
-        let gameActive = true;
+        let gameActive = false;
         let hintCount = 3;
         let hintsUsed = 0;
+        let gameStarted = false;
         
-        // 获取今天的日期字符串
+        // Get today's date
         function getTodayDate() {
             const today = new Date();
             return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
         }
         
-        // 初始化今日问题
+        // Initialize questions
         function initTodayQuestions() {
             const shuffled = [...allQuestions];
             for (let i = shuffled.length - 1; i > 0; i--) {
@@ -451,11 +612,9 @@
                     answerCount: answerCount
                 };
             });
-            
-            console.log('今日問題:', todayQuestions);
         }
         
-        // 加载今日进度
+        // Load saved progress
         function loadTodayProgress() {
             const today = getTodayDate();
             const saved = localStorage.getItem(`gameProgress_${today}_${currentUser.id}`);
@@ -467,7 +626,7 @@
                 hintsUsed = progress.hintsUsed || 0;
                 hintCount = 3 - hintsUsed;
                 document.getElementById('hintCount').textContent = hintCount;
-                console.log('加载今日进度:', progress);
+                updateScoreDisplay();
             } else {
                 initTodayQuestions();
                 currentQuestionIndex = 0;
@@ -476,11 +635,10 @@
                 hintCount = 3;
                 document.getElementById('hintCount').textContent = hintCount;
             }
-            startGameTimer();
-            loadCurrentQuestion();
+            updateScoreDisplay();
         }
         
-        // 保存今日进度
+        // Save progress
         function saveTodayProgress() {
             const today = getTodayDate();
             const progress = {
@@ -493,27 +651,38 @@
             localStorage.setItem(`gameProgress_${today}_${currentUser.id}`, JSON.stringify(progress));
         }
         
-        // 开始游戏计时器
-        function startGameTimer() {
-            if (gameTimerInterval) {
-                clearInterval(gameTimerInterval);
-            }
+        // Start game
+        function startGame() {
+            gameStarted = true;
+            gameActive = true;
+            gameTimeLeft = 90;
             
+            // Hide start screen, show active game
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('activeGame').style.display = 'block';
+            
+            // Reset game state
+            if (gameTimerInterval) clearInterval(gameTimerInterval);
+            if (questionTimerInterval) clearInterval(questionTimerInterval);
+            
+            startGameTimer();
+            loadCurrentQuestion();
+        }
+        
+        // Start game timer
+        function startGameTimer() {
             gameTimerInterval = setInterval(() => {
                 if (gameActive && gameTimeLeft > 0) {
                     gameTimeLeft -= 0.1;
                     const timerElement = document.getElementById('gameTimer');
                     if (timerElement) {
                         timerElement.textContent = gameTimeLeft.toFixed(2);
-                        
-                        // 最后10秒警告效果
                         if (gameTimeLeft <= 10) {
                             timerElement.classList.add('timer-warning');
                         } else {
                             timerElement.classList.remove('timer-warning');
                         }
                     }
-                    
                     if (gameTimeLeft <= 0) {
                         endGameDueToTimeout();
                     }
@@ -521,64 +690,7 @@
             }, 100);
         }
         
-        // 时间到结束游戏
-        async function endGameDueToTimeout() {
-            gameActive = false;
-            if (gameTimerInterval) clearInterval(gameTimerInterval);
-            if (questionTimerInterval) clearInterval(questionTimerInterval);
-            
-            const guessInput = document.getElementById('guessInput');
-            const guessBtn = document.getElementById('guessBtn');
-            if (guessInput) guessInput.disabled = true;
-            if (guessBtn) guessBtn.disabled = true;
-            
-            alert(`⏰ 時間到！\n今日總分: ${todayScore} 分\n明天再來挑戰吧！`);
-            
-            // 保存今日分数
-            await saveTodayScoreToDatabase();
-        }
-        
-        // 获取提示
-        function getHint() {
-            if (hintCount <= 0) {
-                alert('今日提示次數已用完！明天再來吧！');
-                return;
-            }
-            
-            if (!gameActive) {
-                alert('遊戲已結束！');
-                return;
-            }
-            
-            if (currentSynonyms.length === 0) {
-                alert('已經猜完所有答案了！');
-                return;
-            }
-            
-            // 随机选择一个未猜出的同义词作为提示
-            const remainingSynonyms = currentSynonyms;
-            const randomHint = remainingSynonyms[Math.floor(Math.random() * remainingSynonyms.length)];
-            
-            hintCount--;
-            hintsUsed++;
-            document.getElementById('hintCount').textContent = hintCount;
-            saveTodayProgress();
-            
-            // 显示提示
-            const hintDiv = document.createElement('div');
-            hintDiv.className = 'guess-item hint-item';
-            hintDiv.innerHTML = `
-                <span>💡 提示</span>
-                <span>其中一個答案是: "${randomHint}"</span>
-            `;
-            const guessesList = document.getElementById('guessesList');
-            if (guessesList) {
-                guessesList.appendChild(hintDiv);
-                hintDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-        }
-        
-        // 加载当前问题
+        // Load current question
         function loadCurrentQuestion() {
             if (currentQuestionIndex >= todayQuestions.length) {
                 endGameComplete();
@@ -590,20 +702,16 @@
             guesses = [];
             gameActive = true;
             
-            // 重置问题计时器
-            if (questionTimerInterval) {
-                clearInterval(questionTimerInterval);
-            }
+            if (questionTimerInterval) clearInterval(questionTimerInterval);
             questionStartTime = Date.now();
             
-            // 更新UI
             const questionNumber = document.getElementById('questionNumber');
             const targetWord = document.getElementById('targetWord');
             const answerCount = document.getElementById('answerCount');
             const guessInput = document.getElementById('guessInput');
             const guessBtn = document.getElementById('guessBtn');
             
-            if (questionNumber) questionNumber.textContent = `第 ${currentQuestionIndex + 1} / ${todayQuestions.length} 題`;
+            if (questionNumber) questionNumber.textContent = `Question ${currentQuestionIndex + 1} / ${todayQuestions.length}`;
             if (targetWord) targetWord.textContent = currentQuestion.word;
             if (answerCount) answerCount.textContent = currentQuestion.answerCount;
             if (guessInput) {
@@ -613,35 +721,17 @@
             }
             if (guessBtn) guessBtn.disabled = false;
             updateGuessesList();
-            
-            console.log('當前問題:', currentQuestion);
         }
         
-        // 完成所有题目
-        async function endGameComplete() {
-            gameActive = false;
-            if (gameTimerInterval) clearInterval(gameTimerInterval);
-            if (questionTimerInterval) clearInterval(questionTimerInterval);
-            
-            const guessInput = document.getElementById('guessInput');
-            const guessBtn = document.getElementById('guessBtn');
-            if (guessInput) guessInput.disabled = true;
-            if (guessBtn) guessBtn.disabled = true;
-            
-            alert(`🎉 恭喜完成今日所有挑戰！\n用時: ${(90 - gameTimeLeft).toFixed(1)}秒\n今日總分: ${todayScore} 分\n明天再來挑戰吧！`);
-            
-            await saveTodayScoreToDatabase();
-        }
-        
-        // 提交猜测
+        // Submit guess
         async function submitGuess() {
-            if (!gameActive) {
-                alert('遊戲已結束！');
+            if (!gameActive || !gameStarted) {
+                alert('Please start the game first!');
                 return;
             }
             
             if (gameTimeLeft <= 0) {
-                alert('時間已用盡！');
+                alert('Time is up!');
                 return;
             }
             
@@ -650,195 +740,176 @@
             
             const guess = guessInput.value.trim().toLowerCase();
             if (!guess) {
-                alert('請輸入一個單詞！');
+                alert('Please enter a word!');
                 return;
             }
             
-            // 检查是否已经猜过
             if (guesses.some(g => g.word === guess)) {
-                alert('你已經猜過這個詞了！');
+                alert('You already guessed this word!');
                 guessInput.value = '';
                 return;
             }
             
-            // 检查是否正确
             const isCorrect = currentSynonyms.includes(guess);
             
             if (isCorrect) {
-                // 计算得分
                 const elapsed = (Date.now() - questionStartTime) / 1000;
                 const timeBonus = Math.max(0, Math.floor(30 - elapsed));
                 const points = 10 + timeBonus;
                 
                 todayScore += points;
-                
-                // 从剩余同义词中移除
                 currentSynonyms = currentSynonyms.filter(s => s !== guess);
                 
-                const feedback = `✓ 正確！ +${points}分 (用時 ${elapsed.toFixed(1)}秒)`;
+                const feedback = `✓ Correct! +${points} points (${elapsed.toFixed(1)}s)`;
                 const resultClass = 'correct';
                 
-                // 保存猜测
-                guesses.push({
-                    word: guess,
-                    correct: true,
-                    feedback: feedback,
-                    class: resultClass,
-                    points: points
-                });
+                guesses.push({ word: guess, correct: true, feedback: feedback, class: resultClass });
                 
-                // 更新UI
                 updateGuessesList();
                 guessInput.value = '';
                 updateScoreDisplay();
                 saveTodayProgress();
                 
-                // 检查是否猜出了所有同义词
                 if (currentSynonyms.length === 0) {
                     await nextQuestion();
                 }
             } else {
-                // 错误猜测
-                const feedback = '✗ 錯誤，再試試看！';
-                guesses.push({
-                    word: guess,
-                    correct: false,
-                    feedback: feedback,
-                    class: 'wrong'
-                });
+                const feedback = '✗ Wrong, try again!';
+                guesses.push({ word: guess, correct: false, feedback: feedback, class: 'wrong' });
                 updateGuessesList();
                 guessInput.value = '';
             }
         }
         
-        // 下一题
+        // Next question
         async function nextQuestion() {
             gameActive = false;
             
-            // 显示正确答案
             const correctAnswersDiv = document.createElement('div');
             correctAnswersDiv.className = 'guess-item perfect';
             correctAnswersDiv.innerHTML = `
-                <span>✨ 本題正確答案</span>
+                <span>✨ Correct Answers</span>
                 <span>${currentQuestion.synonyms.join(', ')}</span>
             `;
-            const guessesList = document.getElementById('guessesList');
-            if (guessesList) guessesList.appendChild(correctAnswersDiv);
+            document.getElementById('guessesList').appendChild(correctAnswersDiv);
             
-            // 移动到下一题
             currentQuestionIndex++;
             saveTodayProgress();
             
-            // 检查是否完成所有题目
             if (currentQuestionIndex >= todayQuestions.length) {
                 await endGameComplete();
             } else {
-                // 加载下一题
-                setTimeout(() => {
-                    loadCurrentQuestion();
-                }, 1000);
+                setTimeout(() => loadCurrentQuestion(), 1000);
             }
         }
         
-        // 保存今日分数到数据库
+        // End game complete
+        async function endGameComplete() {
+            gameActive = false;
+            if (gameTimerInterval) clearInterval(gameTimerInterval);
+            if (questionTimerInterval) clearInterval(questionTimerInterval);
+            
+            alert(`🎉 Congratulations! You completed today's challenge!\nTime used: ${(90 - gameTimeLeft).toFixed(1)} seconds\nToday's Score: ${todayScore} points!\nCome back tomorrow!`);
+            
+            await saveTodayScoreToDatabase();
+            
+            // Reset UI to start screen
+            document.getElementById('startScreen').style.display = 'block';
+            document.getElementById('activeGame').style.display = 'none';
+            gameStarted = false;
+        }
+        
+        // Time out
+        async function endGameDueToTimeout() {
+            gameActive = false;
+            if (gameTimerInterval) clearInterval(gameTimerInterval);
+            if (questionTimerInterval) clearInterval(questionTimerInterval);
+            
+            alert(`⏰ Time's Up!\nToday's Score: ${todayScore} points\nCome back tomorrow for a new challenge!`);
+            
+            await saveTodayScoreToDatabase();
+            
+            document.getElementById('startScreen').style.display = 'block';
+            document.getElementById('activeGame').style.display = 'none';
+            gameStarted = false;
+        }
+        
+        // Get hint
+        function getHint() {
+            if (!gameActive || !gameStarted) {
+                alert('Please start the game first!');
+                return;
+            }
+            
+            if (hintCount <= 0) {
+                alert('No hints left for today!');
+                return;
+            }
+            
+            if (currentSynonyms.length === 0) {
+                alert('You already found all answers!');
+                return;
+            }
+            
+            const randomHint = currentSynonyms[Math.floor(Math.random() * currentSynonyms.length)];
+            hintCount--;
+            hintsUsed++;
+            document.getElementById('hintCount').textContent = hintCount;
+            saveTodayProgress();
+            
+            const hintDiv = document.createElement('div');
+            hintDiv.className = 'guess-item hint-item';
+            hintDiv.innerHTML = `<span>💡 Hint</span><span>One answer is: "${randomHint}"</span>`;
+            document.getElementById('guessesList').appendChild(hintDiv);
+            hintDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        // Update score display
+        function updateScoreDisplay() {
+            document.getElementById('todayScore').textContent = todayScore;
+            document.getElementById('questionsCompleted').textContent = `${currentQuestionIndex} / ${todayQuestions.length}`;
+            document.getElementById('totalScore').textContent = totalScore;
+        }
+        
+        // Update guesses list
+        function updateGuessesList() {
+            const guessesList = document.getElementById('guessesList');
+            if (!guessesList) return;
+            guessesList.innerHTML = '';
+            guesses.forEach((guess) => {
+                const guessDiv = document.createElement('div');
+                guessDiv.className = `guess-item ${guess.class}`;
+                guessDiv.innerHTML = `<span>${guess.word}</span><span>${guess.feedback}</span>`;
+                guessesList.appendChild(guessDiv);
+            });
+        }
+        
+        // Handle Enter key
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') submitGuess();
+        }
+        
+        // Save score to database
         async function saveTodayScoreToDatabase() {
             try {
-                const today = getTodayDate();
                 await fetch(`${API_URL}/users/${currentUser.id}/score`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ score: todayScore })
                 });
                 
-                // 更新游戏次数
-                await fetch(`${API_URL}/users/${currentUser.id}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        'Games Played': (parseInt(currentUser['Games Played']) || 0) + 1
-                    })
-                });
-                
-                // 刷新用户数据
                 const userResponse = await fetch(`${API_URL}/users/${currentUser.id}`);
                 currentUser = await userResponse.json();
                 localStorage.setItem('gameUser', JSON.stringify(currentUser));
-                
                 totalScore = parseInt(currentUser['Total Score']) || 0;
                 updateScoreDisplay();
                 loadTodayLeaderboard();
-                
             } catch (error) {
-                console.error('保存分数失败:', error);
+                console.error('Failed to save score:', error);
             }
         }
         
-        // 重置今日游戏
-        function resetTodayGame() {
-            if (confirm('確定要重置今日進度嗎？所有今日得分將被清除！')) {
-                const today = getTodayDate();
-                localStorage.removeItem(`gameProgress_${today}_${currentUser.id}`);
-                initTodayQuestions();
-                currentQuestionIndex = 0;
-                todayScore = 0;
-                hintsUsed = 0;
-                hintCount = 3;
-                gameTimeLeft = 90;
-                const hintCountElem = document.getElementById('hintCount');
-                const gameTimerElem = document.getElementById('gameTimer');
-                if (hintCountElem) hintCountElem.textContent = hintCount;
-                if (gameTimerElem) {
-                    gameTimerElem.textContent = '90.00';
-                    gameTimerElem.classList.remove('timer-warning');
-                }
-                
-                if (gameTimerInterval) clearInterval(gameTimerInterval);
-                if (questionTimerInterval) clearInterval(questionTimerInterval);
-                
-                startGameTimer();
-                loadCurrentQuestion();
-                updateScoreDisplay();
-                saveTodayProgress();
-            }
-        }
-        
-        // 更新分数显示
-        function updateScoreDisplay() {
-            const todayScoreElem = document.getElementById('todayScore');
-            const questionsCompletedElem = document.getElementById('questionsCompleted');
-            const totalScoreElem = document.getElementById('totalScore');
-            
-            if (todayScoreElem) todayScoreElem.textContent = todayScore;
-            if (questionsCompletedElem) questionsCompletedElem.textContent = `${currentQuestionIndex} / ${todayQuestions.length}`;
-            if (totalScoreElem) totalScoreElem.textContent = totalScore;
-        }
-        
-        // 更新猜测列表
-        function updateGuessesList() {
-            const guessesList = document.getElementById('guessesList');
-            if (!guessesList) return;
-            
-            guessesList.innerHTML = '';
-            
-            guesses.forEach((guess) => {
-                const guessDiv = document.createElement('div');
-                guessDiv.className = `guess-item ${guess.class}`;
-                guessDiv.innerHTML = `
-                    <span class="guess-word">${guess.word}</span>
-                    <span class="guess-feedback">${guess.feedback}</span>
-                `;
-                guessesList.appendChild(guessDiv);
-            });
-        }
-        
-        // 处理回车键
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                submitGuess();
-            }
-        }
-        
-        // 加载今日排行榜
+        // Load leaderboard
         async function loadTodayLeaderboard() {
             try {
                 const today = getTodayDate();
@@ -849,188 +920,146 @@
                 const todayScores = [];
                 for (const user of users) {
                     const saved = localStorage.getItem(`gameProgress_${today}_${user.id}`);
-                    if (saved) {
-                        const progress = JSON.parse(saved);
-                        todayScores.push({
-                            username: user.Username,
-                            score: progress.todayScore,
-                            id: user.id
-                        });
-                    } else {
-                        todayScores.push({
-                            username: user.Username,
-                            score: 0,
-                            id: user.id
-                        });
-                    }
+                    todayScores.push({
+                        username: user.Username,
+                        score: saved ? JSON.parse(saved).todayScore : 0,
+                        id: user.id
+                    });
                 }
                 
                 todayScores.sort((a, b) => b.score - a.score);
                 const top10 = todayScores.slice(0, 10);
                 
                 const leaderboardDiv = document.getElementById('todayLeaderboard');
-                if (!leaderboardDiv) return;
-                
                 if (top10.length === 0 || top10.every(s => s.score === 0)) {
-                    leaderboardDiv.innerHTML = '<div class="loading">今日暫無得分，快來成為第一名！</div>';
+                    leaderboardDiv.innerHTML = '<div class="loading">No scores yet today. Be the first!</div>';
                     return;
                 }
                 
-                let html = '<ul class="leaderboard-list">';
+                let html = '<div class="leaderboard-list">';
                 top10.forEach((player, index) => {
                     const isCurrentUser = currentUser && player.id === currentUser.id;
                     html += `
-                        <li class="leaderboard-item ${isCurrentUser ? 'highlight' : ''}">
-                            <span style="font-weight: bold;">#${index + 1}</span>
+                        <div class="leaderboard-item ${isCurrentUser ? 'highlight' : ''}">
+                            <span class="rank">#${index + 1}</span>
                             <span>${escapeHtml(player.username)}</span>
-                            <span style="color: #667eea; font-weight: bold;">${player.score} 分</span>
-                        </li>
+                            <span style="font-weight: bold;">${player.score} pts</span>
+                        </div>
                     `;
                 });
-                html += '</ul>';
-                
+                html += '</div>';
                 leaderboardDiv.innerHTML = html;
-                
             } catch (error) {
-                console.error('加载排行榜失败:', error);
+                console.error('Failed to load leaderboard:', error);
             }
         }
         
-        // 用户登录或注册
-        async function loginOrRegister() {
+        // Login function
+        async function login() {
             const username = document.getElementById('username').value.trim();
             const email = document.getElementById('email').value.trim();
             
             if (!username || !email) {
-                showMessage('authMessage', '請填寫使用者名稱和信箱！', 'error');
+                showMessage('authMessage', 'Please enter username and email!', 'error');
                 return;
             }
-            
-            showMessage('authMessage', '處理中...', 'success');
             
             try {
                 const response = await fetch(`${API_URL}/users`);
                 const data = await response.json();
                 const users = data.results || data;
-                
                 let existingUser = users.find(u => u.Username === username || u.Email === email);
                 
                 let user;
                 if (existingUser) {
                     user = existingUser;
-                    showMessage('authMessage', `歡迎回來，${username}！`, 'success');
+                    showMessage('authMessage', `Welcome back, ${username}!`, 'success');
                 } else {
                     const createResponse = await fetch(`${API_URL}/users`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            Username: username, 
-                            Email: email, 
-                            'Total Score': 0,
-                            'Games Played': 0,
-                            'Correct Guesses': 0
-                        })
+                        body: JSON.stringify({ Username: username, Email: email, 'Total Score': 0, 'Games Played': 0, 'Correct Guesses': 0 })
                     });
                     user = await createResponse.json();
-                    showMessage('authMessage', `歡迎新玩家，${username}！`, 'success');
+                    showMessage('authMessage', `Welcome, ${username}!`, 'success');
                 }
                 
                 currentUser = user;
                 totalScore = parseInt(currentUser['Total Score']) || 0;
                 localStorage.setItem('gameUser', JSON.stringify(user));
-                showGameInterface();
+                
+                // Show game section
+                document.getElementById('authSection').style.display = 'none';
+                document.getElementById('gameSection').style.display = 'block';
+                document.getElementById('displayUsername').textContent = currentUser.Username;
+                
+                loadTodayProgress();
                 loadTodayLeaderboard();
+                updateScoreDisplay();
                 
             } catch (error) {
-                console.error('登录错误:', error);
-                showMessage('authMessage', `登錄失敗: ${error.message}`, 'error');
+                showMessage('authMessage', `Login failed: ${error.message}`, 'error');
             }
         }
         
-        // 显示游戏界面
-        function showGameInterface() {
-            const loginForm = document.getElementById('loginForm');
-            const userInfo = document.getElementById('userInfo');
-            const gameSection = document.getElementById('gameSection');
-            const displayUsername = document.getElementById('displayUsername');
-            
-            if (loginForm) loginForm.style.display = 'none';
-            if (userInfo) userInfo.style.display = 'block';
-            if (displayUsername) displayUsername.textContent = currentUser.Username;
-            if (gameSection) gameSection.style.display = 'block';
-            
-            loadTodayProgress();
-            updateScoreDisplay();
-            loadTodayLeaderboard();
-        }
-        
-        // 退出登录
+        // Logout
         function logout() {
             if (gameTimerInterval) clearInterval(gameTimerInterval);
             if (questionTimerInterval) clearInterval(questionTimerInterval);
             
             currentUser = null;
+            gameStarted = false;
+            gameActive = false;
             localStorage.removeItem('gameUser');
             
-            const loginForm = document.getElementById('loginForm');
-            const userInfo = document.getElementById('userInfo');
-            const gameSection = document.getElementById('gameSection');
-            const username = document.getElementById('username');
-            const email = document.getElementById('email');
+            document.getElementById('authSection').style.display = 'block';
+            document.getElementById('gameSection').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('email').value = '';
             
-            if (loginForm) loginForm.style.display = 'block';
-            if (userInfo) userInfo.style.display = 'none';
-            if (gameSection) gameSection.style.display = 'none';
-            if (username) username.value = '';
-            if (email) email.value = '';
+            // Reset game UI
+            document.getElementById('startScreen').style.display = 'block';
+            document.getElementById('activeGame').style.display = 'none';
         }
         
-        // 显示消息
+        // Show message
         function showMessage(elementId, message, type) {
             const element = document.getElementById(elementId);
             if (element) {
-                element.innerHTML = `<div class="${type === 'error' ? 'error-message' : 'success-message'}">${message}</div>`;
-                setTimeout(() => {
-                    element.innerHTML = '';
-                }, 3000);
+                element.innerHTML = `<div class="message ${type === 'error' ? 'error-message' : 'success-message'}">${message}</div>`;
+                setTimeout(() => element.innerHTML = '', 3000);
             }
         }
         
-        // HTML转义
+        // HTML escape
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
         
-        // 页面加载时初始化
+        // Check saved user on load
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('页面加载完成');
             loadTodayLeaderboard();
-            checkSavedUser();
-        });
-        
-        // 检查保存的用户
-        function checkSavedUser() {
             const savedUser = localStorage.getItem('gameUser');
             if (savedUser) {
                 try {
                     currentUser = JSON.parse(savedUser);
                     totalScore = parseInt(currentUser['Total Score']) || 0;
-                    showGameInterface();
+                    document.getElementById('authSection').style.display = 'none';
+                    document.getElementById('gameSection').style.display = 'block';
+                    document.getElementById('displayUsername').textContent = currentUser.Username;
+                    loadTodayProgress();
+                    loadTodayLeaderboard();
+                    updateScoreDisplay();
                 } catch (e) {
-                    console.error('解析用户数据失败:', e);
                     localStorage.removeItem('gameUser');
                 }
             }
-        }
+        });
         
-        // 每30秒刷新排行榜
-        setInterval(() => {
-            if (currentUser) {
-                loadTodayLeaderboard();
-            }
-        }, 30000);
+        // Refresh leaderboard
+        setInterval(() => { if (currentUser) loadTodayLeaderboard(); }, 30000);
     </script>
 </body>
 </html>
