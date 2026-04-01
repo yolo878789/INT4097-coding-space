@@ -6,19 +6,6 @@ const os = require('os');  // 添加这行
 
 const app = express();
 
-// 获取本机局域网IP的函数
-function getLocalIP() {
-    const interfaces = os.networkInterfaces();
-    for (let name of Object.keys(interfaces)) {
-        for (let iface of interfaces[name]) {
-            // 跳过内部地址和非IPv4
-            if (iface.family === 'IPv4' && !iface.internal) {
-                return iface.address;
-            }
-        }
-    }
-    return '127.0.0.1';
-}
 
 // 中间件配置
 app.use(cors());                // 允许跨域请求
@@ -221,17 +208,78 @@ app.get('/api/leaderboard', async (req, res) => {
 app.get('*', (req, res) => {
     res.sendFile(path.join(frontendPath, 'index.html'));
 });
+// 替换原来的 getLocalIp 函数
+function getLocalIp() {
+    const { networkInterfaces } = require('os');
+    const nets = networkInterfaces();
+    
+    // 优先级：Wi-Fi > 以太网 > 其他
+    const priorities = ['Wi-Fi', '以太网', 'Ethernet', 'wlan'];
+    
+    let bestIp = null;
+    
+    for (const name of Object.keys(nets)) {
+        for (const net of nets[name]) {
+            // 只选择IPv4，非内部地址，并且不是VPN虚拟网卡
+            if (net.family === 'IPv4' && !net.internal && 
+                !name.toLowerCase().includes('tailscale') &&
+                !name.toLowerCase().includes('surfshark') &&
+                !name.toLowerCase().includes('wireguard') &&
+                !name.toLowerCase().includes('vpn')) {
+                
+                // 检查是否是物理网卡（192.168.x.x 或 172.16-31.x.x 或 10.x.x.x）
+                const ip = net.address;
+                if (ip.startsWith('192.168.') || 
+                    ip.startsWith('172.') && parseInt(ip.split('.')[1]) >= 16 && parseInt(ip.split('.')[1]) <= 31 ||
+                    ip.startsWith('10.') && !ip.startsWith('10.14')) { // 排除10.14的VPN
+                    
+                    // 优先选择Wi-Fi
+                    if (name.includes('Wi-Fi') || name.includes('wlan')) {
+                        return ip;
+                    }
+                    bestIp = ip;
+                }
+            }
+        }
+    }
+    
+    return bestIp || '127.0.0.1';
+}
 
-// 启动服务器 - 监听所有网络接口
-const localIP = getLocalIP();
+// 修改启动部分
+const localIp = getLocalIp();
 app.listen(PORT, '0.0.0.0', () => {
     console.log('\n========================================');
     console.log('✅ 同义词大师游戏服务器已启动！');
     console.log('========================================');
     console.log(`📌 本机访问: http://localhost:${PORT}`);
-    console.log(`📌 局域网访问: http://${localIP}:${PORT}`);
-    console.log('\n📝 其他设备可以通过局域网IP访问');
+    console.log(`📌 局域网IP: http://${localIp}:${PORT}`);
+    console.log('\n⚠️  重要提示：');
+    console.log(`   请使用 http://${localIp}:${PORT} 让其他设备访问`);
+    console.log(`   当前检测到的VPN地址 ${getAllVpnIps()} 无法局域网访问`);
+    console.log('\n📝 连接要求：');
+    console.log('1. 其他设备连接到相同的WiFi网络');
+    console.log('2. 关闭或断开VPN连接（Tailscale, Surfshark等）');
+    console.log('3. 确保Windows防火墙允许端口3000');
     console.log('========================================\n');
 });
+
+function getAllVpnIps() {
+    const { networkInterfaces } = require('os');
+    const nets = networkInterfaces();
+    const vpnIps = [];
+    
+    for (const name of Object.keys(nets)) {
+        for (const net of nets[name]) {
+            if (net.family === 'IPv4' && 
+                (name.toLowerCase().includes('tailscale') ||
+                 name.toLowerCase().includes('surfshark') ||
+                 name.toLowerCase().includes('wireguard'))) {
+                vpnIps.push(net.address);
+            }
+        }
+    }
+    return vpnIps.length ? ` (VPN: ${vpnIps.join(', ')})` : '';
+}
 
 module.exports = app;

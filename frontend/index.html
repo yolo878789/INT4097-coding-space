@@ -27,6 +27,7 @@
             -webkit-text-fill-color: transparent;
             font-size: 2.5em;
         }
+        .subtitle { text-align: center; color: #666; margin-bottom: 20px; }
         .input-group { margin-bottom: 20px; }
         .input-group input {
             width: 100%;
@@ -34,6 +35,11 @@
             font-size: 1em;
             border: 2px solid #e0e0e0;
             border-radius: 15px;
+            transition: border-color 0.3s;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
         }
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -45,6 +51,10 @@
             border-radius: 50px;
             cursor: pointer;
             width: 100%;
+            transition: transform 0.2s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
         }
         .btn-secondary {
             background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
@@ -53,6 +63,10 @@
             padding: 12px 30px;
             border-radius: 50px;
             cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
         }
         .btn-start {
             background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
@@ -64,6 +78,10 @@
             border-radius: 50px;
             cursor: pointer;
             width: 100%;
+            transition: transform 0.2s;
+        }
+        .btn-start:hover {
+            transform: translateY(-2px);
         }
         .score-stats {
             display: flex;
@@ -79,9 +97,10 @@
             text-align: center;
         }
         .stat-value { font-size: 2em; font-weight: bold; color: #667eea; }
+        .stat-label { color: #666; margin-top: 5px; }
         .timer-display {
             text-align: center;
-            font-size: 1.5em;
+            font-size: 1.2em;
             margin: 20px 0;
             padding: 20px;
             background: linear-gradient(135deg, #f0f0ff 0%, #e6e9ff 100%);
@@ -96,9 +115,11 @@
             margin-bottom: 30px;
             color: white;
         }
-        .target-word { font-size: 3em; font-weight: bold; margin: 20px 0; }
+        .target-word { font-size: 3em; font-weight: bold; margin: 20px 0; word-break: break-word; }
+        .definition-text { font-size: 1.1em; opacity: 0.95; }
         .guess-input-group { display: flex; gap: 15px; margin-bottom: 15px; }
         .guess-input { flex: 1; padding: 15px 20px; font-size: 1.1em; border: 2px solid #e0e0e0; border-radius: 15px; }
+        .guess-input:focus { outline: none; border-color: #667eea; }
         .guesses-history { margin-top: 30px; max-height: 400px; overflow-y: auto; }
         .guess-item {
             display: flex;
@@ -107,9 +128,15 @@
             padding: 12px 20px;
             margin-bottom: 10px;
             border-radius: 12px;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
         .correct { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
         .wrong { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+        .hint-item { background: #fff3cd; color: #856404; border-left: 4px solid #ffc107; }
         .user-info-card {
             display: flex;
             justify-content: space-between;
@@ -119,15 +146,24 @@
             background: #f5f7fa;
             border-radius: 15px;
         }
+        .user-name { font-size: 1.1em; font-weight: bold; color: #667eea; }
+        .leaderboard-list { max-height: 400px; overflow-y: auto; }
         .leaderboard-item {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             padding: 12px 20px;
             margin-bottom: 8px;
             background: #f8f9fa;
             border-radius: 12px;
+            transition: transform 0.2s;
         }
+        .leaderboard-item:hover { transform: translateX(5px); }
         .leaderboard-item.highlight { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .leaderboard-rank { font-weight: bold; width: 50px; }
+        .leaderboard-name { flex: 1; margin-left: 10px; }
+        .leaderboard-score { font-weight: bold; margin-right: 10px; }
+        .leaderboard-games { color: #666; }
         .modal {
             display: none;
             position: fixed;
@@ -146,13 +182,37 @@
             padding: 30px;
             max-width: 500px;
             width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
         }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 2em;
+            cursor: pointer;
+            color: #999;
+        }
+        .close-btn:hover { color: #333; }
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .message.success { background: #d4edda; color: #155724; }
+        .message.error { background: #f8d7da; color: #721c24; }
         .debug-console {
             position: fixed;
             bottom: 10px;
             right: 10px;
-            background: black;
-            color: lime;
+            background: rgba(0,0,0,0.9);
+            color: #0f0;
             padding: 10px;
             font-size: 10px;
             border-radius: 5px;
@@ -161,11 +221,16 @@
             overflow-y: auto;
             z-index: 9999;
             font-family: monospace;
+            cursor: pointer;
+            display: block;
             display: none;
         }
+        .debug-console:hover { opacity: 0.8; }
         @media (max-width: 768px) {
             .card { padding: 20px; }
             .target-word { font-size: 2em; }
+            .score-stats { flex-direction: column; }
+            
         }
     </style>
 </head>
@@ -173,12 +238,12 @@
     <div class="container">
         <div class="card" id="authSection">
             <h1>🎯 Synonym Master</h1>
-            <p class="subtitle">Fixed - Saves Score on Timeout</p>
+            <p class="subtitle">Test Your Vocabulary Skills!</p>
             <div class="input-group">
-                <input type="text" id="username" placeholder="Username" value="aaa">
+                <input type="text" id="username" placeholder="Username" value="testuser">
             </div>
             <div class="input-group">
-                <input type="email" id="email" placeholder="Email" value="aaa@gmail.com">
+                <input type="email" id="email" placeholder="Email" value="test@example.com">
             </div>
             <button class="btn-primary" onclick="loginOrRegister()">🎮 Login / Register</button>
             <div id="authMessage"></div>
@@ -188,8 +253,8 @@
             <div class="user-info-card">
                 <span class="user-name">👤 <span id="displayUsername"></span></span>
                 <div>
-                    <button class="btn-secondary" onclick="showScoreboard()">🏆 Scoreboard</button>
-                    <button class="btn-secondary" onclick="logout()" style="margin-left: 10px;">Logout</button>
+                    <button class="btn-secondary" onclick="showScoreboard()" style="margin-right: 10px;">🏆 Rankings</button>
+                    <button class="btn-secondary" onclick="logout()">🚪 Logout</button>
                 </div>
             </div>
 
@@ -211,14 +276,15 @@
             <div id="startScreen">
                 <div style="text-align: center; padding: 40px;">
                     <h2>Ready to Challenge?</h2>
-                    <p>5 Questions | <span style="color: red; font-weight: bold;">180 Seconds</span> (3 minutes)</p>
+                    <p>📝 5 Questions | ⏱️ <span style="color: #ff6b6b; font-weight: bold;">180 Seconds</span> (3 minutes)</p>
+                    <p>💡 3 Hints Available</p>
                     <button class="btn-start" onclick="startGame()">🚀 Start Daily Challenge</button>
                 </div>
             </div>
 
             <div id="activeGame" style="display: none;">
                 <div class="timer-display">
-                    ⏱️ Time Left: <span class="timer-value" id="gameTimer">180.00</span> seconds
+                    ⏱️ Time Left: <span class="timer-value" id="gameTimer">180.0</span> seconds
                     <div>💡 Hints Left: <span id="hintCount">3</span></div>
                 </div>
                 <div class="word-display">
@@ -227,11 +293,12 @@
                     <div class="definition-text" id="definitionText">Loading definition...</div>
                 </div>
                 <div class="guess-input-group">
-                    <input type="text" id="guessInput" placeholder="Enter synonym..." onkeypress="if(event.key==='Enter') submitGuess()">
-                    <button class="btn-primary" onclick="submitGuess()">Guess</button>
+                    <input type="text" id="guessInput" placeholder="Enter a synonym..." onkeypress="if(event.key==='Enter') submitGuess()">
+                    <button class="btn-primary" onclick="submitGuess()">Submit Guess</button>
                 </div>
-                <button class="btn-secondary" onclick="getHint()" style="width: 100%;">💡 Get Hint</button>
+                <button class="btn-secondary" onclick="getHint()" style="width: 100%; margin-top: 10px;">💡 Get Hint</button>
                 <div class="guesses-history">
+                    <h3>Your Guesses:</h3>
                     <div id="guessesList"></div>
                 </div>
             </div>
@@ -253,11 +320,13 @@
         </div>
     </div>
 
-    <div class="debug-console" id="debugConsole">
-        Debug Console - Ready<br>
+    <div class="debug-console" id="debugConsole" onclick="this.style.display='none'">
+        📊 Debug Console (Click to hide)<br>
+        Ready...
     </div>
 
     <script>
+        // Debug logging function
         function debugLog(message, data = null) {
             const debugDiv = document.getElementById('debugConsole');
             const timestamp = new Date().toLocaleTimeString();
@@ -265,13 +334,15 @@
             debugDiv.innerHTML += logMsg;
             debugDiv.scrollTop = debugDiv.scrollHeight;
             console.log(message, data || '');
-            if (debugDiv.innerHTML.split('<br>').length > 40) {
+            
+            // Keep last 50 messages
+            if (debugDiv.innerHTML.split('<br>').length > 50) {
                 const lines = debugDiv.innerHTML.split('<br>');
-                debugDiv.innerHTML = lines.slice(-35).join('<br>');
+                debugDiv.innerHTML = lines.slice(-45).join('<br>');
             }
         }
 
-        const API_BASE_URL = 'http://localhost:3000/api';
+        const API_BASE_URL = '/api';
         let dictionaryData = null;
         let allWords = [];
         let currentUser = null;
@@ -282,20 +353,52 @@
         let guesses = [];
         let questionStartTime = null;
         let gameTimerInterval = null;
-        let gameTimeLeft = 180; // Increased to 3 minutes
+        let gameTimeLeft = 180;
         let todayScore = 0;
         let gameActive = false;
         let hintCount = 3;
-        let hintsUsed = 0;
         let gameStarted = false;
         let gameCompleted = false;
 
+        // Load dictionary
         async function loadDictionary() {
             debugLog('Loading dictionary...');
             try {
-                const response = await fetch('test_dictionary.json');
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                dictionaryData = await response.json();
+                // Create a sample dictionary if not available
+                dictionaryData = {
+                    "happy": {
+                        definition: "Feeling or showing pleasure or contentment",
+                        synonyms: ["joyful", "cheerful", "delighted", "pleased", "glad"]
+                    },
+                    "big": {
+                        definition: "Of considerable size or extent",
+                        synonyms: ["large", "huge", "enormous", "gigantic", "massive"]
+                    },
+                    "smart": {
+                        definition: "Having or showing intelligence",
+                        synonyms: ["intelligent", "clever", "bright", "sharp", "wise"]
+                    },
+                    "fast": {
+                        definition: "Moving or capable of moving at high speed",
+                        synonyms: ["quick", "swift", "rapid", "speedy", "brisk"]
+                    },
+                    "strong": {
+                        definition: "Having great physical power or strength",
+                        synonyms: ["powerful", "mighty", "sturdy", "tough", "robust"]
+                    },
+                    "beautiful": {
+                        definition: "Pleasing the senses or mind aesthetically",
+                        synonyms: ["attractive", "lovely", "gorgeous", "stunning", "pretty"]
+                    },
+                    "quiet": {
+                        definition: "Making little or no noise",
+                        synonyms: ["silent", "calm", "peaceful", "still", "tranquil"]
+                    },
+                    "brave": {
+                        definition: "Ready to face danger or pain",
+                        synonyms: ["courageous", "fearless", "bold", "daring", "heroic"]
+                    }
+                };
                 allWords = Object.keys(dictionaryData);
                 debugLog(`✅ Loaded ${allWords.length} words`);
                 return true;
@@ -305,30 +408,32 @@
             }
         }
 
+        // Generate daily questions
         function generateTodayQuestions() {
             const shuffled = [...allWords];
             for (let i = shuffled.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
             }
-            const selected = shuffled.slice(0, 5);
+            const selected = shuffled.slice(0, Math.min(5, allWords.length));
             return selected.map(word => {
                 const wordData = dictionaryData[word];
                 const allSynonyms = wordData.synonyms || [];
                 const answerCount = Math.min(3, allSynonyms.length);
                 return {
                     word: word,
-                    definition: wordData.definition || "No definition",
+                    definition: wordData.definition || "No definition available",
                     synonyms: allSynonyms.slice(0, answerCount),
                     allSynonyms: allSynonyms
                 };
             });
         }
 
+        // API calls
         async function fetchUsers() {
             debugLog('Fetching users from API...');
             try {
-                const response = await fetch(`${API_BASE_URL}/users`);
+                const response = await fetch('http://localhost:3000/api/users');
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const data = await response.json();
                 debugLog(`✅ Fetched ${data.results?.length || 0} users`);
@@ -340,43 +445,57 @@
         }
 
         async function saveScoreToDatabase(userId, totalScore, gamesPlayed, correctGuesses, isTimeout = false) {
-            debugLog(`💾 SAVING SCORE to database - Timeout: ${isTimeout}`, { userId, totalScore, gamesPlayed, correctGuesses });
-            try {
-                const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        'Total Score': totalScore,
-                        'Games Played': gamesPlayed,
-                        'Correct Guesses': correctGuesses
-                    })
-                });
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP ${response.status}: ${errorText}`);
-                }
-                
-                const result = await response.json();
-                debugLog(`✅✅✅ SCORE SAVED SUCCESSFULLY! New total: ${result['Total Score']}`);
-                return result;
-            } catch (error) {
-                debugLog(`❌❌❌ SAVE FAILED: ${error.message}`);
-                return null;
-            }
+    debugLog(`💾 Saving score to database...`, { userId, totalScore, gamesPlayed, correctGuesses, isTimeout });
+    
+    try {
+        const response = await fetch(`http://localhost:3000/api/users/${userId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                'Total Score': totalScore,
+                'Games Played': gamesPlayed,
+                'Correct Guesses': correctGuesses
+            })
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP ${response.status}: ${errorText}`);
         }
+        
+        const result = await response.json();
+        debugLog(`✅✅✅ SCORE SAVED SUCCESSFULLY! New total: ${result['Total Score']}`);
+        return result;
+    } catch (error) {
+        debugLog(`❌❌❌ SAVE FAILED: ${error.message}`);
+        return null;
+    }
+}
 
+        // Login/Register
         async function loginOrRegister() {
             const username = document.getElementById('username').value.trim();
             const email = document.getElementById('email').value.trim();
-            debugLog(`Login attempt: ${username}`);
+            
+            if (!username || !email) {
+                showMessage('Please enter both username and email', 'error');
+                return;
+            }
+            
+            if (!email.includes('@')) {
+                showMessage('Please enter a valid email address', 'error');
+                return;
+            }
+            
+            debugLog(`Login attempt: ${username} / ${email}`);
             
             const users = await fetchUsers();
-            let user = users.find(u => u.Username === username);
+            let user = users.find(u => u.Username === username || u.Email === email);
             
             if (user) {
                 currentUser = user;
                 debugLog(`✅ User logged in:`, { id: currentUser.id, score: currentUser['Total Score'] });
+                showMessage(`Welcome back, ${username}!`, 'success');
             } else {
                 debugLog(`Creating new user...`);
                 try {
@@ -395,18 +514,22 @@
                     user = await response.json();
                     currentUser = user;
                     debugLog(`✅ New user created: ID ${currentUser.id}`);
+                    showMessage(`Welcome to Synonym Master, ${username}!`, 'success');
                 } catch (error) {
                     debugLog(`❌ Create failed: ${error.message}`);
+                    showMessage('Registration failed. Please try again.', 'error');
                     return;
                 }
             }
             
+            // Show game section
             document.getElementById('authSection').style.display = 'none';
             document.getElementById('gameSection').style.display = 'block';
             document.getElementById('displayUsername').textContent = currentUser.Username;
             document.getElementById('totalScore').textContent = currentUser['Total Score'] || 0;
             document.getElementById('gamesPlayed').textContent = currentUser['Games Played'] || 0;
             
+            // Initialize game
             todayQuestions = generateTodayQuestions();
             currentQuestionIndex = 0;
             todayScore = 0;
@@ -417,10 +540,11 @@
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
         }
 
+        // Game functions
         function startGame() {
             debugLog(`Starting game - ${todayQuestions.length} questions, 180 seconds`);
             if (currentQuestionIndex >= todayQuestions.length) {
-                alert('Already completed today!');
+                alert('You have already completed today\'s challenge!');
                 return;
             }
             
@@ -429,7 +553,9 @@
             gameTimeLeft = 180;
             todayScore = 0;
             gameCompleted = false;
+            hintCount = 3;
             document.getElementById('todayScore').textContent = todayScore;
+            document.getElementById('hintCount').textContent = hintCount;
             document.getElementById('startScreen').style.display = 'none';
             document.getElementById('activeGame').style.display = 'block';
             
@@ -442,7 +568,7 @@
             gameTimerInterval = setInterval(() => {
                 if (gameActive && gameTimeLeft > 0) {
                     gameTimeLeft -= 0.1;
-                    document.getElementById('gameTimer').textContent = gameTimeLeft.toFixed(2);
+                    document.getElementById('gameTimer').textContent = gameTimeLeft.toFixed(1);
                     if (gameTimeLeft <= 0) {
                         clearInterval(gameTimerInterval);
                         endGameDueToTimeout();
@@ -472,12 +598,19 @@
         }
 
         function submitGuess() {
-            if (!gameActive || !gameStarted || gameCompleted) return;
+            if (!gameActive || !gameStarted || gameCompleted) {
+                debugLog('Game not active');
+                return;
+            }
+            
             const guess = document.getElementById('guessInput').value.trim().toLowerCase();
-            if (!guess) return;
+            if (!guess) {
+                debugLog('Empty guess');
+                return;
+            }
             
             if (guesses.some(g => g.word === guess)) {
-                alert('Already guessed that!');
+                showMessage('Already guessed that word!', 'error');
                 document.getElementById('guessInput').value = '';
                 return;
             }
@@ -499,10 +632,11 @@
                 
                 if (currentSynonyms.length === 0) {
                     debugLog(`All synonyms found! Moving to next question...`);
+                    showMessage('Great job! Moving to next question...', 'success');
                     nextQuestion();
                 }
             } else {
-                guesses.push({ word: guess, correct: false, feedback: '✗ Wrong', class: 'wrong' });
+                guesses.push({ word: guess, correct: false, feedback: '✗ Wrong synonym', class: 'wrong' });
                 debugLog(`❌ WRONG: "${guess}"`);
                 document.getElementById('guessInput').value = '';
                 updateGuessesList();
@@ -517,7 +651,7 @@
             if (currentQuestionIndex >= todayQuestions.length) {
                 endGameComplete();
             } else {
-                setTimeout(() => loadCurrentQuestion(), 800);
+                setTimeout(() => loadCurrentQuestion(), 1000);
             }
         }
 
@@ -549,7 +683,7 @@
                 document.getElementById('gamesPlayed').textContent = newGamesPlayed;
                 alert(`🎉 Game Complete!\n\nCompleted: ${currentQuestionIndex}/5 questions\nScore: ${todayScore} points\nTotal Score: ${newTotalScore}`);
             } else {
-                alert(`⚠️ Game Complete but score NOT saved!\nScore: ${todayScore}\nCheck server connection.`);
+                alert(`⚠️ Game Complete but score NOT saved!\nScore: ${todayScore}\nPlease check server connection.`);
             }
             
             document.getElementById('startScreen').style.display = 'block';
@@ -584,7 +718,7 @@
                 document.getElementById('totalScore').textContent = newTotalScore;
                 document.getElementById('gamesPlayed').textContent = newGamesPlayed;
                 alert(`⏰ Time's Up!\n\nCompleted: ${currentQuestionIndex}/5 questions\nScore: ${todayScore} points\nTotal Score: ${newTotalScore}`);
-                debugLog(`✅ Score saved despite timeout!`);
+                debugLog(`✅ Score saved successfully despite timeout!`);
             } else {
                 alert(`⚠️ Time's Up! Score: ${todayScore}\nFailed to save to database.`);
                 debugLog(`❌ Score NOT saved on timeout!`);
@@ -597,14 +731,23 @@
         }
 
         function getHint() {
-            if (!gameActive || !gameStarted) return;
-            if (hintCount <= 0) { alert('No hints left!'); return; }
-            if (currentSynonyms.length === 0) return;
+            if (!gameActive || !gameStarted) {
+                debugLog('Game not active');
+                return;
+            }
+            if (hintCount <= 0) { 
+                alert('No hints left!'); 
+                return; 
+            }
+            if (currentSynonyms.length === 0) {
+                alert('No more synonyms to guess!');
+                return;
+            }
             
             const randomHint = currentSynonyms[Math.floor(Math.random() * currentSynonyms.length)];
             hintCount--;
             document.getElementById('hintCount').textContent = hintCount;
-            debugLog(`💡 Hint: "${randomHint}" (${hintCount} left)`);
+            debugLog(`💡 Hint provided: "${randomHint}" (${hintCount} left)`);
             
             const hintDiv = document.createElement('div');
             hintDiv.className = 'guess-item hint-item';
@@ -614,6 +757,7 @@
 
         function updateGuessesList() {
             const list = document.getElementById('guessesList');
+            if (!list) return;
             list.innerHTML = '';
             guesses.forEach(g => {
                 const div = document.createElement('div');
@@ -623,23 +767,30 @@
             });
         }
 
+        // Leaderboard functions
         async function updateLeaderboard() {
             try {
                 const response = await fetch(`${API_BASE_URL}/users`);
                 const data = await response.json();
                 const users = data.results || [];
-                const sorted = users.sort((a, b) => (b['Total Score'] || 0) - (a['Total Score'] || 0));
+                const sorted = users.sort((a, b) => {
+                    const scoreA = parseInt(a['Total Score'] || 0);
+                    const scoreB = parseInt(b['Total Score'] || 0);
+                    return scoreB - scoreA;
+                });
                 const top10 = sorted.slice(0, 10);
                 
                 let html = '<div class="leaderboard-list">';
                 top10.forEach((user, idx) => {
                     const isCurrent = currentUser && user.id === currentUser.id;
+                    const score = parseInt(user['Total Score'] || 0);
+                    const games = parseInt(user['Games Played'] || 0);
                     html += `
                         <div class="leaderboard-item ${isCurrent ? 'highlight' : ''}">
-                            <span>#${idx + 1}</span>
-                            <span>${escapeHtml(user.Username)}</span>
-                            <span><strong>${user['Total Score'] || 0} pts</strong></span>
-                            <span>${user['Games Played'] || 0} games</span>
+                            <span class="leaderboard-rank">#${idx + 1}</span>
+                            <span class="leaderboard-name">${escapeHtml(user.Username)}</span>
+                            <span class="leaderboard-score"><strong>${score} pts</strong></span>
+                            <span class="leaderboard-games">${games} games</span>
                         </div>
                     `;
                 });
@@ -647,6 +798,7 @@
                 document.getElementById('leaderboard').innerHTML = html;
             } catch (error) {
                 debugLog(`Leaderboard error: ${error.message}`);
+                document.getElementById('leaderboard').innerHTML = '<p>Failed to load leaderboard</p>';
             }
         }
 
@@ -657,14 +809,19 @@
                 const response = await fetch(`${API_BASE_URL}/users`);
                 const data = await response.json();
                 const users = data.results || [];
-                const sorted = users.sort((a, b) => (b['Total Score'] || 0) - (a['Total Score'] || 0));
+                const sorted = users.sort((a, b) => {
+                    const scoreA = parseInt(a['Total Score'] || 0);
+                    const scoreB = parseInt(b['Total Score'] || 0);
+                    return scoreB - scoreA;
+                });
                 let html = '<div class="leaderboard-list">';
                 sorted.forEach((user, idx) => {
+                    const score = parseInt(user['Total Score'] || 0);
                     html += `
                         <div class="leaderboard-item">
-                            <span>#${idx + 1}</span>
-                            <span>${escapeHtml(user.Username)}</span>
-                            <span>${user['Total Score'] || 0} pts</span>
+                            <span class="leaderboard-rank">#${idx + 1}</span>
+                            <span class="leaderboard-name">${escapeHtml(user.Username)}</span>
+                            <span class="leaderboard-score"><strong>${score} pts</strong></span>
                         </div>
                     `;
                 });
@@ -672,7 +829,7 @@
                 content.innerHTML = html;
                 modal.style.display = 'flex';
             } catch (error) {
-                content.innerHTML = 'Failed to load';
+                content.innerHTML = '<p>Failed to load rankings</p>';
                 modal.style.display = 'flex';
             }
         }
@@ -687,7 +844,20 @@
             document.getElementById('authSection').style.display = 'block';
             document.getElementById('gameSection').style.display = 'none';
             localStorage.removeItem('currentUser');
-            debugLog('Logged out');
+            debugLog('User logged out');
+            showMessage('Logged out successfully', 'success');
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('authMessage');
+            if (messageDiv) {
+                messageDiv.innerHTML = `<div class="message ${type}">${message}</div>`;
+                setTimeout(() => {
+                    messageDiv.innerHTML = '';
+                }, 3000);
+            } else {
+                alert(message);
+            }
         }
 
         function escapeHtml(text) {
@@ -696,33 +866,46 @@
             return div.innerHTML;
         }
 
+        // Initialize
         async function init() {
             debugLog('Initializing game...');
             await loadDictionary();
+            
             const savedUser = localStorage.getItem('currentUser');
             if (savedUser) {
-                const user = JSON.parse(savedUser);
-                const users = await fetchUsers();
-                const existingUser = users.find(u => u.id === user.id);
-                if (existingUser) {
-                    currentUser = existingUser;
-                    document.getElementById('authSection').style.display = 'none';
-                    document.getElementById('gameSection').style.display = 'block';
-                    document.getElementById('displayUsername').textContent = currentUser.Username;
-                    document.getElementById('totalScore').textContent = currentUser['Total Score'] || 0;
-                    document.getElementById('gamesPlayed').textContent = currentUser['Games Played'] || 0;
-                    todayQuestions = generateTodayQuestions();
-                    currentQuestionIndex = 0;
-                    todayScore = 0;
-                    document.getElementById('todayScore').textContent = todayScore;
-                    updateLeaderboard();
-                    debugLog(`Auto-logged in as ${currentUser.Username}`);
+                try {
+                    const user = JSON.parse(savedUser);
+                    const users = await fetchUsers();
+                    const existingUser = users.find(u => u.id === user.id);
+                    if (existingUser) {
+                        currentUser = existingUser;
+                        document.getElementById('authSection').style.display = 'none';
+                        document.getElementById('gameSection').style.display = 'block';
+                        document.getElementById('displayUsername').textContent = currentUser.Username;
+                        document.getElementById('totalScore').textContent = currentUser['Total Score'] || 0;
+                        document.getElementById('gamesPlayed').textContent = currentUser['Games Played'] || 0;
+                        todayQuestions = generateTodayQuestions();
+                        currentQuestionIndex = 0;
+                        todayScore = 0;
+                        document.getElementById('todayScore').textContent = todayScore;
+                        updateLeaderboard();
+                        debugLog(`Auto-logged in as ${currentUser.Username}`);
+                    }
+                } catch (error) {
+                    debugLog(`Auto-login failed: ${error.message}`);
                 }
             }
         }
 
+        // Start the app
         init();
-        window.onclick = (e) => { if (e.target === document.getElementById('scoreboardModal')) closeScoreboard(); };
+        
+        // Close modal when clicking outside
+        window.onclick = (e) => { 
+            if (e.target === document.getElementById('scoreboardModal')) {
+                closeScoreboard();
+            }
+        };
     </script>
 </body>
 </html>
